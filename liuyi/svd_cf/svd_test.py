@@ -8,29 +8,29 @@ from recsys.evaluation.decision import PrecisionRecallF1
 recsys.algorithm.VERBOSE = True
 
 def load():
-    svd.load_data('ratings.txt', sep='::', format={'col': 0, 'row': 1, 'value': 2, 'ids': int})
-    svd.compute(k=100, min_values=10, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
+    svd.load_data('ratings.txt', sep='::', format={'col': 1, 'row': 0, 'value': 2, 'ids': int})
+    svd.compute(k=2000, min_values=20, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
 
 
 def split(train, test):
-    [train, test] = svd._data.split_train_test(shuffle_data=False)
+    [train, test] = svd._data.split_train_test(percent=80.3333103, shuffle_data=False)
     return [train, test]
 
 def toDict(data):
     trdict = {}
     for line in data:
-        trdict.setdefault(int(line[2]),{})
-        trdict[int(line[2])].setdefault(int(line[1]),0)
-        trdict[int(line[2])][(line[1])] = float(line[0])
+        trdict.setdefault(int(line[1]),{})
+        trdict[int(line[1])].setdefault(int(line[2]),0)
+        trdict[int(line[1])][(line[2])] = float(line[0])
     return trdict
 
 
 def recommend(data):
-    fw = open('recList.txt','a')
+    fw = open('recList.txt','w')
     for user in data.keys():
         reclist = {}
         reclist.setdefault(user,[])
-        itemList = svd.recommend(user,n=50,is_row=False)
+        itemList = svd.recommend(user,n=50)
         reclist[user]=itemList
         fw.write(str(reclist)+'\n')
     fw.close()
@@ -58,7 +58,7 @@ def evaluation(data):
                 hit+=1
         #print hit
         recall += len(tu)
-        precision+=20
+        precision+=50
     recall = hit * 100 / (recall * 1.0)
     precision = hit * 100 / (precision * 1.0)
     if recall != 0 and precision != 0:
