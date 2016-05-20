@@ -2,19 +2,26 @@ import sys
 import os
 import recsys.algorithm
 import recsys.evaluation
+import heapq
+import cPickle
 from recsys.algorithm.factorize import SVD
 from recsys.evaluation.decision import PrecisionRecallF1
 
 recsys.algorithm.VERBOSE = True
 
+
+def dump(data,fin):
+    w = open(fin, 'wb')
+    cPickle.dump(data, w)
+    w.close()
+
+
 def load():
     svd.load_data('ratings.txt', sep='::', format={'col': 1, 'row': 0, 'value': 2, 'ids': int})
-    svd.compute(k=2000, min_values=20, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
-
-
-def split(train, test):
     [train, test] = svd._data.split_train_test(percent=80.3333103, shuffle_data=False)
+    svd.compute(k=4000, min_values=20, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
     return [train, test]
+
 
 def toDict(data):
     trdict = {}
@@ -23,6 +30,27 @@ def toDict(data):
         trdict[int(line[1])].setdefault(int(line[2]),0)
         trdict[int(line[1])][(line[2])] = float(line[0])
     return trdict
+
+
+def usimilarity(data):
+    simMatrix = dict()
+    PROCESS = len(data)
+    cnt = 0.0
+    for i in data.keys():
+        cnt+=1
+        for j in data.keys():
+            if i == j:
+                continue
+            sim = svd.similarity(i,j)
+            if sim > 0:
+                simMatrix.setdefault(i,list())
+                simMatrix[i].append((j,sim))
+        if i in simMatrix:
+            simMatrix[i] = heapq.nlargest(200,simMatrix[i], key=lambda x: x[1])
+        if cnt % int(PROCESS * 0.05) == 0:
+                print '\r%.1f%%' % (100 * cnt / PROCESS)
+    filename = "svdUserSimMatrix.dict"
+    dump(simMatrix,filename)
 
 
 def recommend(data):
@@ -74,12 +102,12 @@ def fvalue(rap):
 
 if __name__=='__main__':
     svd = SVD()
-    load()
     train = []
     test = []
-    [train,test] = split(train,test)
+    [train,test] = load()
     uidict =  toDict(train)
     tedict = toDict(test)
+    usimilarity(uidict)
     recommend(uidict)
     rap = evaluation(tedict)
     print rap
