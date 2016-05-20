@@ -12,7 +12,6 @@
 @description: null
 """
 from config import config
-from random import seed
 from lib import stdLib
 
 
@@ -23,10 +22,8 @@ def divideTrainAndTest():
     read.close()
     trainData = []
     testData = []
-    seed(seed)
     for i in data:
         tmp = i[:-1].split(config.separator)
-        userId = tmp[0]
         time = tmp[3]
         if float(time) > 975804787:
             testData.append(i)
@@ -62,7 +59,3 @@ def divideTrainAndTest():
     stdLib.dumpData(uiDict, config.uiDictFile)
     stdLib.dumpData(iuDict, config.iuDictFile)
     print "Data split finished..."
-
-
-if __name__ == '__main__':
-    divideTrainAndTest()

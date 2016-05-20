@@ -48,15 +48,16 @@ userSimMatrix = path.join(path.dirname(argv[0]), r'result/userSimMatrix.dict')
 CFUUserSimMatrix = path.join(path.dirname(argv[0]), r'result/CFUUserSimMatrix.dict')
 combineSimMatrix = path.join(path.dirname(argv[0]), r'result/combineSimMatrix.dict')
 recommendDict = path.join(path.dirname(argv[0]), r'result/recommend.dict')
+SVDUserSimMatrix = path.join(path.dirname(argv[0]), r'result/SVDUserSimMatrix.dict')
 
 # 用于存放推荐列表的文件
 recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList.txt')
 
-needDivideTrainAndTest = True  # 是否需要划分测试集和训练集
-needPreSettle = True  # 是否需要预处理数据
-needCFU = True  # 是否需要运行CFU
+needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
+needPreSettle = False  # 是否需要预处理数据
+needCFU = False  # 是否需要运行CFU
 needTRT = True  # 是否需要进行TRT的运算
-needCombine = True  # 是否需要合并CFU和TRT用户矩阵
+needCombine = False  # 是否需要合并CFU和TRT用户矩阵
 needEvaluate = True  # 是否需要进行评价
 
 

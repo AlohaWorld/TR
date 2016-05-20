@@ -15,7 +15,7 @@ from config import config
 from lib import stdLib
 from math import pi
 
-def generaRecommendList(simMatrix = None, isScored = True):
+def generaRecommendList(simMatrix = None):
     filename = simMatrix or config.CFUUserSimMatrix
     simUsers = stdLib.loadData(filename)
     length = len(simUsers)
@@ -29,13 +29,10 @@ def generaRecommendList(simMatrix = None, isScored = True):
         if user not in uiDict:
             continue
         history = uiDict[user]
-        simSum = 0
-        avgU = sum(uiDict[user].values()) / float(len(uiDict[user]))
         recommendDict.setdefault(user, dict())
         for simUser in simUsers[user]:  # simUsers是用户相似度矩阵,candidate是与userId相似的用户及其相似度
             tmpUser = simUser[0]
             similarity = simUser[1]
-            simSum += similarity
             if tmpUser in uiDict:
                 candidate = uiDict[tmpUser]
                 for item in candidate:
@@ -44,10 +41,6 @@ def generaRecommendList(simMatrix = None, isScored = True):
                     rating = candidate[item]
                     recommendDict[user].setdefault(item, 0)
                     recommendDict[user][item] += float(similarity) * rating
-        for item in recommendDict[user]:
-            if simSum != 0:
-                recommendDict[user][item] /= simSum
-                recommendDict[user][item] += avgU
         recommendDict[user] = dict(sorted(recommendDict[user].items(),
                                             key=lambda x: x[1], reverse=True)[0:config.listLength])
         if count % int(length * config.percentage) == 0:
