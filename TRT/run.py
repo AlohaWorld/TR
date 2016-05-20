@@ -16,11 +16,10 @@ from tools.sortByTime import sortByTime
 from tools.combineById import combineById
 from tools.divideTrainAndTest import divideTrainAndTest
 from CFU.CFU import CFU
-from core.UHCF import UHCF
+from core.TRT import TRT
 from common.evaluation import Evaluation
 from common.recommendation import generaRecommendList
 from common.combineCFUAndTHCCF import combine
-from common.userQuality import userQuality
 from config import config
 
 if __name__ == '__main__':
@@ -29,21 +28,22 @@ if __name__ == '__main__':
     print 'program start......'
     print 'start time :'
     print startTime
-    # userQuality()
     if config.needDivideTrainAndTest is True:
         divideTrainAndTest()
     if config.needPreSettle is True:
         sortByTime()
         combineById()
-    if config.needUHCF is True:
-        uhcf = UHCF()
-        uhcf.generaUserPrefer()
-        uhcf.simCalculate()
-        generaRecommendList(config.userSimMatrix)
+    if config.needTRT is True:
+        trt = TRT()
+        trt.generaUserPrefer()
+        trt.simCalculate()
+        if config.needCombine is False and config.needCFU is False:
+            generaRecommendList(config.userSimMatrix)
     if config.needCFU is True:
-        # cfu = CFU()
-        # cfu.matrix()
-        generaRecommendList()
+        cfu = CFU()
+        cfu.matrix()
+        if config.needCombine is False and config.needTRT is False:
+            generaRecommendList()
     if config.needCombine is True:
         combine()
         generaRecommendList(config.combineSimMatrix)
@@ -54,10 +54,8 @@ if __name__ == '__main__':
         print "precision: %5.5f%%" % rap[1]
         fvalue = evaluate.fvalue(rap)
         print "F value: %5.5f%%" % fvalue
-        mae = 0  # evaluate.MAE()
+        mae = 0
         print "MAE: %5.5f" % mae
-        # diversity = evaluate.diversity()
-        # print "diversity: %5.5f%%" % diversity
         outfile = r'result/evaluationResult.csv'
         out = open(outfile, 'a')
         spliter = ','

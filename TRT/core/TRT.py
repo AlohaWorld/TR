@@ -16,16 +16,12 @@ from config import config
 from math import sqrt, log, e
 from lib import stdLib
 
-class UHCF(object):
+class TRT(object):
     def __init__(self):
         self.userDict = dict()  # 用于存放用户及其偏好的dictionary
         self.userPreferRateDict = dict()  # 用于存放用户及其各个标签偏好比率的dictionary
         self.timeIntervalDict = dict()
-        self.ratingTimesDict = dict()
         self.now = datetime(2016, 5, 17)  # datetime.utcnow()
-        # self.userQualityDict = stdLib.loadData(config.userQualityDict)
-        # self.timeInterval()
-        # self.ratingTimes()
 
     # 生成用户偏好的函数
     def generaUserPrefer(self):
@@ -38,17 +34,9 @@ class UHCF(object):
         count = 0.0
         for i in data:
             count += 1
-            # self.labelPreferCalRatingTimes(i)  # 根据打分次数进行惩罚
             self.labelPreferCal(i)  # 根据打分时间进行惩罚
             if count % int(length * config.percentage) == 0:
-                print '%f%%' % (count * 100 / (length))
-        # self.labelPreferRate()
-        # self.userDict = dict()
-        # for i in data:
-        #     count += 1
-        #     self.labelPreferCal(i, False)
-        #     if count % int(length * config.percentage) == 0:
-        #         print '%f%%' % (count * 100 / (length * 2))
+                print '%f%%' % (count * 100 / length)
         # 对用户标签偏好进行归一化
         for i in self.userDict:
             maxV = minV = self.userDict[i][0]
@@ -59,7 +47,6 @@ class UHCF(object):
                     minV = self.userDict[i][j]
             for j in range(config.labelLength):
                 self.userDict[i][j] = (self.userDict[i][j] - minV) / (maxV - minV)
-
 
         outfile = config.userPreferFile
         out = open(outfile, 'w')
@@ -76,14 +63,12 @@ class UHCF(object):
         print 'finished...'
         return 0
 
-    def labelPreferCal(self, line, isFirst = True):
+    def labelPreferCal(self, line):
         tmp = line[:-1].split(config.separator)
         userId = tmp[0]
-        # movieId = tmp[1]
         grade = float(tmp[2])
         rateTime = datetime.utcfromtimestamp(float(tmp[3]))
-        T = (self.now - rateTime).days  # 不进行时间窗口的移动
-        # T = (self.now - rateTime - self.timeIntervalDict[userId]).days + 1  # 将打分时间距今的时间转换为天数
+        T = (self.now - rateTime).days  # 不进行时间窗口的移动,将打分时间距今的时间转换为天数
         labels = tmp[4]
         labelArr = labels.split(config.subSeparator)
         labelLen = 0  # 电影所含的标签数量
@@ -91,8 +76,7 @@ class UHCF(object):
             if i == '1':
                 labelLen += 1
 
-        if isFirst is True:  # 是否为第一次进行训练,是否需要基于偏好进行在训练
-            aGrade = grade / labelLen  # 每个标签的平均得分 TODO:按照用户以前生成的偏好对不同标签进行偏置
+        aGrade = grade / labelLen  # 每个标签的平均得分 TODO:按照用户以前生成的偏好对不同标签进行偏置
 
         self.userDict.setdefault(userId, {})
 
@@ -100,41 +84,7 @@ class UHCF(object):
         for j in range(config.labelLength):
             self.userDict[userId].setdefault(j, 0)
             if labelArr[j] == '1':
-                if isFirst is False:
-                    aGrade = grade * self.userPreferRateDict[userId][j]
                 self.userDict[userId][j] += aGrade / log(pow(T + config.delta, config.G), e)
-    def labelPreferCalRatingTimes(self, line):
-        tmp = line[:-1].split(config.separator)
-        userId = tmp[0]
-        grade = float(tmp[2])
-        T = self.ratingTimesDict[userId]
-        labels = tmp[4]
-        labelArr = labels.split(config.subSeparator)
-        labelLen = 0  # 电影所含的标签数量
-        for i in labelArr:
-            if i == '1':
-                labelLen += 1
-
-        aGrade = grade / labelLen  # 每个标签的平均得分
-
-        self.userDict.setdefault(userId, {})
-
-        for j in range(config.labelLength):
-            self.userDict[userId].setdefault(j, 0)
-            if labelArr[j] == '1':
-                self.userDict[userId][j] += aGrade / pow(T + config.delta, config.G)
-        self.ratingTimesDict[userId] -= 1
-
-    # 在训练时为每个标签计算评分
-    def labelPreferRate(self):
-        allRate = 0.0
-        for user in self.userDict:
-            for j in range(config.labelLength):
-                    allRate += self.userDict[user][j]
-            for j in range(config.labelLength):
-                self.userPreferRateDict.setdefault(user, {})
-                self.userPreferRateDict[user].setdefault(j, 0.0)
-                self.userPreferRateDict[user][j] = self.userDict[user][j] / allRate
 
     def simCalculate(self):
         read = open(config.userPreferFile, 'r')
@@ -188,36 +138,4 @@ class UHCF(object):
         stdLib.dumpData(userMatrix, outfile)
 
         print 'finished......'
-
-    def timeInterval(self):
-        print 'calculating time interval......'
-        filename = config.ratingWithLabelFile
-        read = open(filename, 'r')
-        data = read.readlines()
-        read.close()
-
-        initTime = datetime.utcfromtimestamp(0)
-
-        for i in data:
-            tmp = i[:-1].split(config.separator)
-            userId = tmp[0]
-            time = datetime.utcfromtimestamp(float(tmp[3]))
-            self.timeIntervalDict.setdefault(userId, initTime)
-            if time > self.timeIntervalDict[userId]:
-                self.timeIntervalDict[userId] = time
-
-        for userId in self.timeIntervalDict:
-            self.timeIntervalDict[userId] = self.now - self.timeIntervalDict[userId]
-
-    def ratingTimes(self):
-        filename = config.ratingWithLabelFile
-        read = open(filename, 'r')
-        data = read.readlines()
-        read.close()
-
-        for i in data:
-            tmp = i[:-1].split(config.separator)
-            userId = tmp[0]
-            self.ratingTimesDict.setdefault(userId, 0)
-            self.ratingTimesDict[userId] += 1
 

@@ -38,11 +38,10 @@ def generaRecommendList(simMatrix = None, isScored = True):
             simSum += similarity
             if tmpUser in uiDict:
                 candidate = uiDict[tmpUser]
-                # avg = sum(candidate.values()) / float(len(candidate))
                 for item in candidate:
                     if item in history:
                         continue
-                    rating = candidate[item]  # - avg
+                    rating = candidate[item]
                     recommendDict[user].setdefault(item, 0)
                     recommendDict[user][item] += float(similarity) * rating
         for item in recommendDict[user]:

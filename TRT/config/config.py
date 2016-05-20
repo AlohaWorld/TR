@@ -48,22 +48,21 @@ userSimMatrix = path.join(path.dirname(argv[0]), r'result/userSimMatrix.dict')
 CFUUserSimMatrix = path.join(path.dirname(argv[0]), r'result/CFUUserSimMatrix.dict')
 combineSimMatrix = path.join(path.dirname(argv[0]), r'result/combineSimMatrix.dict')
 recommendDict = path.join(path.dirname(argv[0]), r'result/recommend.dict')
-userQualityDict = path.join(path.dirname(argv[0]), r'result/userQuality.dict')
 
 # 用于存放推荐列表的文件
 recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList.txt')
 
-needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
-needPreSettle = False  # 是否需要预处理数据
-needCFU = False  # 是否需要运行CFU
-needUHCF = True  # 是否需要进行UHCF的运算
-needCombine = False  # 是否需要合并CFU和UHCF用户矩阵
+needDivideTrainAndTest = True  # 是否需要划分测试集和训练集
+needPreSettle = True  # 是否需要预处理数据
+needCFU = True  # 是否需要运行CFU
+needTRT = True  # 是否需要进行TRT的运算
+needCombine = True  # 是否需要合并CFU和TRT用户矩阵
 needEvaluate = True  # 是否需要进行评价
 
 
-# UHCF计算时的time hot算法的参数
+# TRT计算时的time hot算法的参数
 G = 1.6  # G为time hot算法的衰减参数,越大衰减越厉害,时间越近的值权重越大
-delta = 500  # delta 为移动坐标轴的参数
+delta = 1000  # delta 为移动坐标轴的参数
 
 percentage = 0.10  # 运行时每次显示的完成百分比
 
