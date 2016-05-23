@@ -4,22 +4,17 @@ import recsys.algorithm
 import recsys.evaluation
 import heapq
 import cPickle
+import stdLib
 from recsys.algorithm.factorize import SVD
 from recsys.evaluation.decision import PrecisionRecallF1
 
 recsys.algorithm.VERBOSE = True
 
 
-def dump(data,fin):
-    w = open(fin, 'wb')
-    cPickle.dump(data, w)
-    w.close()
-
-
 def load():
     svd.load_data('ratings.txt', sep='::', format={'col': 1, 'row': 0, 'value': 2, 'ids': int})
     [train, test] = svd._data.split_train_test(percent=80.3333103, shuffle_data=False)
-    svd.compute(k=4000, min_values=20, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
+    svd.compute(k=4000, min_values=10, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
     return [train, test]
 
 
@@ -41,16 +36,17 @@ def usimilarity(data):
         for j in data.keys():
             if i == j:
                 continue
-            sim = svd.similarity(i,j)
+            sim = float(svd.similarity(i,j))
+            #print 'i: %s, j: %s, sim: %f' % (i,j,sim)
             if sim > 0:
                 simMatrix.setdefault(i,list())
                 simMatrix[i].append((j,sim))
         if i in simMatrix:
             simMatrix[i] = heapq.nlargest(200,simMatrix[i], key=lambda x: x[1])
-        if cnt % int(PROCESS * 0.05) == 0:
+        if cnt % int(PROCESS * 0.10) == 0:
                 print '\r%.1f%%' % (100 * cnt / PROCESS)
     filename = "svdUserSimMatrix.dict"
-    dump(simMatrix,filename)
+    stdLib.dumpData(simMatrix,filename)
 
 
 def recommend(data):
