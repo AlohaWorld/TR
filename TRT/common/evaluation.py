@@ -11,9 +11,9 @@
 @time: 16/1/6 17:23
 @description: null
 """
-from config import config
+from TRT.config import config
 import math
-from lib import stdLib
+from TRT.lib import stdLib
 
 class Evaluation(object):
     def __init__(self, filename=None):

@@ -11,11 +11,11 @@
 @time: 16/1/18 17:30
 @description: null
 """
-from config import config
-from lib import stdLib
+from UHCF.config import config
+from UHCF.lib import stdLib
 
 def combine():
-    CFUData = stdLib.loadData(config.CFUUserSimMatrix)
+    CFUData = stdLib.loadData(config.SVDSettledUserSimDict)  # (config.CFUUserSimMatrix)  #
     simData = stdLib.loadData(config.userSimMatrix)
     print 'start combining CFU and sim......'
     a = 0.28
@@ -27,8 +27,9 @@ def combine():
         for tuples in CFUData[user]:
             CFUDict[user].setdefault(tuples[0], tuples[1])
         simDict.setdefault(user, {})
-        for tuples in simData[user]:
-            simDict[user].setdefault(tuples[0], tuples[1])
+        if user in simData:
+            for tuples in simData[user]:
+                simDict[user].setdefault(tuples[0], tuples[1])
 
     for user in CFUDict:
         for simUser in CFUDict[user]:

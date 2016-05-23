@@ -11,8 +11,8 @@
 @time: 16/1/6 15:29
 @description: null
 """
-from config import config
-from lib import stdLib
+from TRT.config import config
+from TRT.lib import stdLib
 
 
 def divideTrainAndTest():

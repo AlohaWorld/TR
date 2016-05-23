@@ -53,8 +53,9 @@ class Evaluation(object):
             recall += len(tu)
             precision += config.listLength
 
-        recall = hit * 100 / (recall * 1.0)
-        precision = hit * 100 / (precision * 1.0)
+        if recall != 0 and precision != 0:
+            recall = hit * 100 / (recall * 1.0)
+            precision = hit * 100 / (precision * 1.0)
         if recall != 0 and precision != 0:
             return [recall, precision]
         else:

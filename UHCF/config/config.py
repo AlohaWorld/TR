@@ -49,15 +49,16 @@ CFUUserSimMatrix = path.join(path.dirname(argv[0]), r'result/CFUUserSimMatrix.di
 combineSimMatrix = path.join(path.dirname(argv[0]), r'result/combineSimMatrix.dict')
 recommendDict = path.join(path.dirname(argv[0]), r'result/recommend.dict')
 userQualityDict = path.join(path.dirname(argv[0]), r'result/userQuality.dict')
-
+SVDUserSimDict = path.join(path.dirname(argv[0]), r'result/svdUserSimMatrix.dict')
+SVDSettledUserSimDict = path.join(path.dirname(argv[0]), r'result/SVDSettledUserSim.dict')
 # 用于存放推荐列表的文件
 recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList.txt')
 
 needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
 needPreSettle = False  # 是否需要预处理数据
 needCFU = False  # 是否需要运行CFU
-needUHCF = True  # 是否需要进行UHCF的运算
-needCombine = False  # 是否需要合并CFU和UHCF用户矩阵
+needUHCF = False  # 是否需要进行UHCF的运算
+needCombine = True  # 是否需要合并CFU和UHCF用户矩阵
 needEvaluate = True  # 是否需要进行评价
 
 

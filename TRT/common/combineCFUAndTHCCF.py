@@ -11,14 +11,14 @@
 @time: 16/1/18 17:30
 @description: null
 """
-from config import config
-from lib import stdLib
+from TRT.config import config
+from TRT.lib import stdLib
 
 def combine():
-    CFUData = stdLib.loadData(config.CFUUserSimMatrix)
+    CFUData = stdLib.loadData(config.SVDUserSimMatrix)  # (config.CFUUserSimMatrix)
     simData = stdLib.loadData(config.userSimMatrix)
     print 'start combining CFU and sim......'
-    a = 0.28
+    a = 1
     CFUDict = {}
     simDict = {}
     resultDict = {}

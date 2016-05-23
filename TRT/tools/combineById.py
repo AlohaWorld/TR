@@ -11,8 +11,8 @@
 @time: 15/12/7 15:06
 @description: null
 """
-from tools import sortByTime
-from config import config
+from TRT.tools import sortByTime
+from TRT.config import config
 
 
 def combineById():

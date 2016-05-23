@@ -15,6 +15,7 @@ from datetime import datetime
 from tools.sortByTime import sortByTime
 from tools.combineById import combineById
 from tools.divideTrainAndTest import divideTrainAndTest
+from tools.settleSVDData import settleSVDData
 from CFU.CFU import CFU
 from core.UHCF import UHCF
 from common.evaluation import Evaluation
@@ -30,6 +31,7 @@ if __name__ == '__main__':
     print 'start time :'
     print startTime
     # userQuality()
+    settleSVDData()
     if config.needDivideTrainAndTest is True:
         divideTrainAndTest()
     if config.needPreSettle is True:

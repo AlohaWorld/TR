@@ -23,7 +23,7 @@ class UHCF(object):
         self.timeIntervalDict = dict()
         self.ratingTimesDict = dict()
         self.now = datetime(2016, 5, 17)  # datetime.utcnow()
-        # self.userQualityDict = stdLib.loadData(config.userQualityDict)
+        self.userQualityDict = stdLib.loadData(config.userQualityDict)
         # self.timeInterval()
         # self.ratingTimes()
 
@@ -102,7 +102,7 @@ class UHCF(object):
             if labelArr[j] == '1':
                 if isFirst is False:
                     aGrade = grade * self.userPreferRateDict[userId][j]
-                self.userDict[userId][j] += aGrade / log(pow(T + config.delta, config.G), e)
+                self.userDict[userId][j] += aGrade / pow(T + config.delta, config.G)
     def labelPreferCalRatingTimes(self, line):
         tmp = line[:-1].split(config.separator)
         userId = tmp[0]

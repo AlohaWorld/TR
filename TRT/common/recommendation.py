@@ -11,8 +11,8 @@
 @time: 16/1/18 14:27
 @description: null
 """
-from config import config
-from lib import stdLib
+from TRT.config import config
+from TRT.lib import stdLib
 from math import pi
 
 def generaRecommendList(simMatrix = None):
