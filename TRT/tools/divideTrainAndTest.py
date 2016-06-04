@@ -13,13 +13,37 @@
 """
 from TRT.config import config
 from TRT.lib import stdLib
+from random import randint, shuffle
 
 
-def divideTrainAndTest():
-    print 'spliting data......'
-    read = open(config.metaRatingFile, 'r')
+def readFile(filename=config.metaRatingFile):
+    read = open(filename, 'r')
     data = read.readlines()
     read.close()
+    return data
+
+def divideTrainAndTest(name = 'time'):
+    print 'spliting data......'
+    if name == 'time':
+        divideByTime(True)
+    elif name == 'user':
+        divideByUser()
+    elif name == 'random':
+        divideByRandom()
+    elif name == 'k':
+        divideByK()
+    settleUIAndIU()
+
+    print "Data split finished..."
+
+def divideByTime(delete = False, filename=config.metaRatingFile):
+    data = readFile(filename)
+    if delete is False:
+        notDeleteDataByTime(data)
+    else:
+        deleteDataByTime(data)
+
+def notDeleteDataByTime(data):
     trainData = []
     testData = []
     for i in data:
@@ -32,13 +56,67 @@ def divideTrainAndTest():
     print len(trainData)
     print len(testData)
 
-    trainOut = open(config.trainFile, 'w')
-    trainOut.write(''.join(trainData))
-    trainOut.close()
-    testOut = open(config.testFile, 'w')
-    testOut.write(''.join(testData))
-    testOut.close()
+    writeFile(trainData, testData)
 
+def deleteDataByTime(data):
+    trainDict = dict()
+    testDict = dict()
+    trainData = []
+    testData = []
+    for i in data:
+        tmp = i[:-1].split(config.separator)
+        userId = tmp[0]
+        time = tmp[3]
+        if float(time) > 975804787:
+            testDict.setdefault(userId, [])
+            testDict[userId].append(i)
+        else:
+            trainDict.setdefault(userId, [])
+            trainDict[userId].append(i)
+    for i in trainDict:
+        if i in testDict:
+            for j in range(len(trainDict[i])):
+                trainData.append(trainDict[i][j])
+    for i in testDict:
+        if i in trainDict:
+            for j in range(len(testDict[i])):
+                testData.append(testDict[i][j])
+    print len(trainData)
+    print len(testData)
+    writeFile(trainData, testData)
+
+def divideByUser(filename=config.metaRatingFile):
+    trainData = []
+    testData = []
+    count = 0
+    data = readFile(filename)
+    for i in data:
+        count += 1
+        if count % 5 == 0:
+            testData.append(i)
+        else:
+            trainData.append(i)
+    print len(trainData)
+    print len(testData)
+
+    writeFile(trainData, testData)
+
+def divideByRandom(filename=config.metaRatingFile):
+    trainData = []
+    testData = []
+    data = readFile(filename)
+    for i in data:
+        rand = randint(1, 5)
+        if rand == 5:
+            testData.append(i)
+        else:
+            trainData.append(i)
+    print len(trainData)
+    print len(testData)
+
+    writeFile(trainData, testData)
+
+def settleUIAndIU():
     file = open(config.trainFile, 'r')
     data = file.readlines()
     uiDict = dict()
@@ -58,4 +136,48 @@ def divideTrainAndTest():
     print r
     stdLib.dumpData(uiDict, config.uiDictFile)
     stdLib.dumpData(iuDict, config.iuDictFile)
-    print "Data split finished..."
+
+def writeFile(trainData, testData):
+    trainOut = open(config.trainFile, 'w')
+    trainOut.write(''.join(trainData))
+    trainOut.close()
+    testOut = open(config.testFile, 'w')
+    testOut.write(''.join(testData))
+    testOut.close()
+
+def shuffleFile():
+    read = open(config.metaRatingFile, 'r')
+    data = read.readlines()
+    read.close()
+    out = open(config.metaShuffledFile, 'w')
+    shuffle(data)
+    out.writelines(data)
+    out.close()
+
+def divideByK(filename=config.metaShuffledFile):
+    shuffleFile()
+    data = readFile(filename)
+    length = len(data)
+    count = 0
+    k = 1
+    resultDict = dict()
+    for i in data:
+        count += 1
+        resultDict.setdefault(k, [])
+        resultDict[k].append(i)
+        if count == length / config.divideK:
+            count = 0
+            k += 1
+    for k in resultDict:
+        trainFileName = 'result/trainRatings%d.txt' % k
+        testFileName = 'result/testRatings%d.txt' % k
+        out1 = open(trainFileName, 'w')
+        out2 = open(testFileName, 'w')
+        for i in resultDict[k]:
+            rand = randint(1, 5)
+            if rand == 5:
+                out2.write(i)
+            else:
+                out1.write(i)
+        out1.close()
+        out2.close()

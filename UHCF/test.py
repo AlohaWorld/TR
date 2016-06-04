@@ -31,7 +31,7 @@ if __name__ == '__main__':
     print 'start time :'
     print startTime
     # userQuality()
-    settleSVDData()
+    # settleSVDData()
     if config.needDivideTrainAndTest is True:
         divideTrainAndTest()
     if config.needPreSettle is True:

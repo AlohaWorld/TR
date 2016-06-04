@@ -18,7 +18,6 @@ def combine():
     CFUData = stdLib.loadData(config.SVDSettledUserSimDict)  # (config.CFUUserSimMatrix)  #
     simData = stdLib.loadData(config.userSimMatrix)
     print 'start combining CFU and sim......'
-    a = 0.28
     CFUDict = {}
     simDict = {}
     resultDict = {}
@@ -34,11 +33,12 @@ def combine():
     for user in CFUDict:
         for simUser in CFUDict[user]:
             if simUser in simDict[user]:
-                CFUDict[user][simUser] = CFUDict[user][simUser] * a + simDict[user][simUser] * (1 - a)
+                CFUDict[user][simUser] = CFUDict[user][simUser] * config.alpha \
+                                         + simDict[user][simUser] * (1 - config.alpha)
             else:
-                CFUDict[user][simUser] *= a
+                CFUDict[user][simUser] *= config.alpha
         for simUser in simDict[user]:
-            CFUDict[user].setdefault(simUser, simDict[user][simUser] * (1 - a))
+            CFUDict[user].setdefault(simUser, simDict[user][simUser] * (1 - config.alpha))
 
     # for user in CFUData:
     #     i, j = 0, 0

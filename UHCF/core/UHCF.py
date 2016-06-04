@@ -102,7 +102,11 @@ class UHCF(object):
             if labelArr[j] == '1':
                 if isFirst is False:
                     aGrade = grade * self.userPreferRateDict[userId][j]
-                self.userDict[userId][j] += aGrade / pow(T + config.delta, config.G)
+                if self.userQualityDict[userId] == 0:
+                    self.userDict[userId][j] += aGrade
+                else:
+                    self.userDict[userId][j] += aGrade  # / pow(T + config.delta, config.G)
+
     def labelPreferCalRatingTimes(self, line):
         tmp = line[:-1].split(config.separator)
         userId = tmp[0]

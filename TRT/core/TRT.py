@@ -22,6 +22,7 @@ class TRT(object):
         self.userPreferRateDict = dict()  # 用于存放用户及其各个标签偏好比率的dictionary
         self.timeIntervalDict = dict()
         self.now = datetime(2016, 5, 17)  # datetime.utcnow()
+        self.userQualityDict = stdLib.loadData(config.userQualityDict)
 
     # 生成用户偏好的函数
     def generaUserPrefer(self):
@@ -37,6 +38,13 @@ class TRT(object):
             self.labelPreferCal(i)  # 根据打分时间进行惩罚
             if count % int(length * config.percentage) == 0:
                 print '%f%%' % (count * 100 / length)
+
+        # filename = "test.txt"
+        # out = open(filename, 'w')
+        # for i in self.userDict:
+        #     for j in range(config.labelLength):
+        #         out.write(i + config.separator + str(j) + config.separator + str(self.userDict[i][j]) + "\n")
+        # out.close()
         # 对用户标签偏好进行归一化
         for i in self.userDict:
             maxV = minV = self.userDict[i][0]
@@ -45,6 +53,8 @@ class TRT(object):
                     maxV = self.userDict[i][j]
                 if self.userDict[i][j] < minV:
                     minV = self.userDict[i][j]
+            if minV == maxV:
+                continue
             for j in range(config.labelLength):
                 self.userDict[i][j] = (self.userDict[i][j] - minV) / (maxV - minV)
 
@@ -84,7 +94,8 @@ class TRT(object):
         for j in range(config.labelLength):
             self.userDict[userId].setdefault(j, 0)
             if labelArr[j] == '1':
-                self.userDict[userId][j] += aGrade / log(pow(T + config.delta, config.G), e)
+                self.userDict[userId][j] += aGrade  # / pow(T, config.G)
+                # / log(T - self.userQualityDict[userId] * config.beta, e)
 
     def simCalculate(self):
         read = open(config.userPreferFile, 'r')
@@ -126,7 +137,10 @@ class TRT(object):
                         fractions += (x - average_i) * (y - average_j)
                         numerator_x += (x - average_i) ** 2
                         numerator_y += (y - average_j) ** 2
-                    result = fractions / sqrt(numerator_x * numerator_y)
+                    if numerator_x == 0 or numerator_y == 0:
+                        result = 0
+                    else:
+                        result = fractions / sqrt(numerator_x * numerator_y)
                     calculateDict.setdefault(userJID, result)
             # 将所有的相似度进行降序排列
             sortedSimGrade = sorted(calculateDict.iteritems(), key=lambda d: d[1], reverse=True)

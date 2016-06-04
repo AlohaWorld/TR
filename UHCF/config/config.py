@@ -42,7 +42,7 @@ ratingWithLabelFile = path.join(path.dirname(argv[0]), r'result/ratingWithLabels
 userPreferFile = path.join(path.dirname(argv[0]), r'result/userPrefer.txt')
 
 # 用于存放与用户最相似的n个用户的文件
-n = 100
+n = 200
 listLength = 50  # 推荐列表长度
 userSimMatrix = path.join(path.dirname(argv[0]), r'result/userSimMatrix.dict')
 CFUUserSimMatrix = path.join(path.dirname(argv[0]), r'result/CFUUserSimMatrix.dict')
@@ -67,6 +67,7 @@ G = 1.6  # G为time hot算法的衰减参数,越大衰减越厉害,时间越近�
 delta = 500  # delta 为移动坐标轴的参数
 
 percentage = 0.10  # 运行时每次显示的完成百分比
+alpha = 0.9
 
 # label dictionary 为所有电影的类型及其编号
 labelDict = {

@@ -26,7 +26,7 @@ subSeparator = conf.get('mainconf', 'subseparator')
 # meta file为元数据文件存放的位置
 metaRatingFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaRatingFile'))
 metaMovieFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaMovieFile'))
-
+metaShuffledFile = path.join(path.dirname(argv[0]), r'result/metaShuffledFile.txt')
 # 训练集和测试集
 trainFile = path.join(path.dirname(argv[0]), r'result/trainRatings.txt')
 testFile = path.join(path.dirname(argv[0]), r'result/testRatings.txt')
@@ -37,18 +37,19 @@ sortedRatingFile = path.join(path.dirname(argv[0]), r'result/sortedRatings.txt')
 
 # label file为将排序后的文件后面接上对应电影的label生成的文件
 ratingWithLabelFile = path.join(path.dirname(argv[0]), r'result/ratingWithLabels.txt')
-
+transRatingWithLabelFile = path.join(path.dirname(argv[0]), r'result/transRatingWithLabelFile.txt')
 # user prefer file为存放计算出的用户偏好的文件
 userPreferFile = path.join(path.dirname(argv[0]), r'result/userPrefer.txt')
 
 # 用于存放与用户最相似的n个用户的文件
-n = 100
+n = 200
 listLength = 50  # 推荐列表长度
 userSimMatrix = path.join(path.dirname(argv[0]), r'result/userSimMatrix.dict')
 CFUUserSimMatrix = path.join(path.dirname(argv[0]), r'result/CFUUserSimMatrix.dict')
 combineSimMatrix = path.join(path.dirname(argv[0]), r'result/combineSimMatrix.dict')
 recommendDict = path.join(path.dirname(argv[0]), r'result/recommend.dict')
 SVDUserSimMatrix = path.join(path.dirname(argv[0]), r'result/SVDUserSim.dict')
+userQualityDict = path.join(path.dirname(argv[0]), r'result/userQuality.dict')
 
 # 用于存放推荐列表的文件
 recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList.txt')
@@ -63,7 +64,12 @@ needEvaluate = True  # 是否需要进行评价
 
 # TRT计算时的time hot算法的参数
 G = 1.6  # G为time hot算法的衰减参数,越大衰减越厉害,时间越近的值权重越大
-delta = 1000  # delta 为移动坐标轴的参数
+delta = 500  # delta 为移动坐标轴的参数
+alpha = 0.2
+beta = 0.8
+
+divideK = 5
+divideMethod = 'user'
 
 percentage = 0.10  # 运行时每次显示的完成百分比
 

@@ -35,6 +35,30 @@ class Evaluation(object):
             self.testData.setdefault(userId, dict())
             self.testData[userId].setdefault(movieId, grade)
 
+    def find_great_recommendation(self):
+        result = self.resultData
+        test = self.testData
+        hit = 0
+        greatDict = dict()
+        for user in result.keys():
+            greatDict.setdefault(user, 0)
+            tu = test.get(user, {})
+            for item in result[user]:
+                if item in tu:
+                    hit += 1
+            precision = hit * 100 / config.listLength * 1.0
+            hit = 0
+            greatDict[user] = precision
+        sortedList = sorted(greatDict.iteritems(), key=lambda x: x[1], reverse=True)
+        precisionFile = "precisionFile.txt"
+        out = open(precisionFile, 'w')
+        for data in sortedList:
+            out.write(data[0] + config.separator + str(data[1]) + "%" +
+                      config.separator + str(int(data[1] * config.listLength / 100)) +
+                      '/' + str(config.listLength) + '\n')
+        out.close()
+
+
 
     def recall_and_precision(self):
         """
@@ -47,6 +71,9 @@ class Evaluation(object):
         precision = 0
         for user in result.keys():
             tu = test.get(user, {})
+            # if len(tu) == 0:
+            #     print tu
+            #     continue
             for item in result[user]:
                 if item in tu:
                     hit += 1

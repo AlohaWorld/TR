@@ -15,11 +15,14 @@ from datetime import datetime
 from tools.sortByTime import sortByTime
 from tools.combineById import combineById
 from tools.divideTrainAndTest import divideTrainAndTest
+from tools.transRating import transRating
+from tools.highPrecisionUserAnalysis import highPrecisionUserAnalysis
 from CFU.CFU import CFU
 from core.TRT import TRT
 from common.evaluation import Evaluation
 from common.recommendation import generaRecommendList
 from common.combineCFUAndTHCCF import combine
+from common.userQuality import userQuality
 from config import config
 
 if __name__ == '__main__':
@@ -28,8 +31,9 @@ if __name__ == '__main__':
     print 'program start......'
     print 'start time :'
     print startTime
+    # userQuality()
     if config.needDivideTrainAndTest is True:
-        divideTrainAndTest()
+        divideTrainAndTest(config.divideMethod)
     if config.needPreSettle is True:
         sortByTime()
         combineById()
@@ -48,7 +52,11 @@ if __name__ == '__main__':
         combine()
         generaRecommendList(config.combineSimMatrix)
     if config.needEvaluate is True:
+        if config.needCombine is False:
+            config.alpha = 0
         evaluate = Evaluation()
+        # evaluate.find_great_recommendation()
+        # highPrecisionUserAnalysis()
         rap = evaluate.recall_and_precision()
         print "recall: %5.5f%%" % rap[0]
         print "precision: %5.5f%%" % rap[1]
@@ -56,12 +64,12 @@ if __name__ == '__main__':
         print "F value: %5.5f%%" % fvalue
         mae = 0
         print "MAE: %5.5f" % mae
-        outfile = r'result/evaluationResult.csv'
+        outfile = r'evaluation/evaluationResult.csv'
         out = open(outfile, 'a')
         spliter = ','
         out.write(str(config.n) + spliter + str(config.listLength) +
                   spliter + str(config.G) + spliter + str(config.delta) +
-                  spliter + str(rap[0])[:7] + '%' + spliter + str(rap[1])[:7] +
+                  spliter + str(config.alpha) + spliter + str(rap[0])[:7] + '%' + spliter + str(rap[1])[:7] +
                   '%' + spliter + str(fvalue)[:7] + '%' + spliter + str(mae)[:7] + spliter + '\n')
         out.close()
     endTime = datetime.now()

@@ -15,10 +15,9 @@ from TRT.config import config
 from TRT.lib import stdLib
 
 def combine():
-    CFUData = stdLib.loadData(config.SVDUserSimMatrix)  # (config.CFUUserSimMatrix)
+    CFUData = stdLib.loadData(config.CFUUserSimMatrix)  # (config.SVDUserSimMatrix)  #
     simData = stdLib.loadData(config.userSimMatrix)
     print 'start combining CFU and sim......'
-    a = 1
     CFUDict = {}
     simDict = {}
     resultDict = {}
@@ -33,11 +32,12 @@ def combine():
     for user in CFUDict:
         for simUser in CFUDict[user]:
             if simUser in simDict[user]:
-                CFUDict[user][simUser] = CFUDict[user][simUser] * a + simDict[user][simUser] * (1 - a)
+                CFUDict[user][simUser] = CFUDict[user][simUser] * config.alpha + \
+                                         simDict[user][simUser] * (1 - config.alpha)
             else:
-                CFUDict[user][simUser] *= a
+                CFUDict[user][simUser] *= config.alpha
         for simUser in simDict[user]:
-            CFUDict[user].setdefault(simUser, simDict[user][simUser] * (1 - a))
+            CFUDict[user].setdefault(simUser, simDict[user][simUser] * (1 - config.alpha))
 
         sortedRecommand = sorted(CFUDict[user].iteritems(), key=lambda d: d[1], reverse=True)
         resultDict.setdefault(user, [])

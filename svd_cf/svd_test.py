@@ -32,21 +32,21 @@ def usimilarity(data):
     PROCESS = len(data)
     cnt = 0.0
     for i in data.keys():
-        cnt+=1
+        cnt += 1
         for j in data.keys():
             if i == j:
                 continue
             sim = float(svd.similarity(i,j))
             #print 'i: %s, j: %s, sim: %f' % (i,j,sim)
             if sim > 0:
-                simMatrix.setdefault(i,list())
-                simMatrix[i].append((j,sim))
+                simMatrix.setdefault(i, list())
+                simMatrix[i].append((j, sim))
         if i in simMatrix:
-            simMatrix[i] = heapq.nlargest(200,simMatrix[i], key=lambda x: x[1])
+            simMatrix[i] = heapq.nlargest(200, simMatrix[i], key=lambda x: x[1])
         if cnt % int(PROCESS * 0.10) == 0:
                 print '\r%.1f%%' % (100 * cnt / PROCESS)
     filename = "svdUserSimMatrix.dict"
-    stdLib.dumpData(simMatrix,filename)
+    stdLib.dumpData(simMatrix, filename)
 
 
 def recommend(data):
@@ -55,7 +55,7 @@ def recommend(data):
         reclist = {}
         reclist.setdefault(user,[])
         itemList = svd.recommend(user,n=50)
-        reclist[user]=itemList
+        reclist[user] = itemList
         fw.write(str(reclist)+'\n')
     fw.close()
 
@@ -79,10 +79,10 @@ def evaluation(data):
         tu = data.get(uid,{})
         for mid in resData[uid]:
             if mid in tu:
-                hit+=1
+                hit += 1
         #print hit
         recall += len(tu)
-        precision+=50
+        precision += 50
     recall = hit * 100 / (recall * 1.0)
     precision = hit * 100 / (precision * 1.0)
     if recall != 0 and precision != 0:
@@ -100,8 +100,8 @@ if __name__=='__main__':
     svd = SVD()
     train = []
     test = []
-    [train,test] = load()
-    uidict =  toDict(train)
+    [train, test] = load()
+    uidict = toDict(train)
     tedict = toDict(test)
     usimilarity(uidict)
     recommend(uidict)
