@@ -31,7 +31,7 @@ def combineById():
 
     for i in movies:
         labelArr = []
-        for m in range(19):
+        for m in range(config.labelLength):
             labelArr.append('0')
         tmp = i.split(config.separator)
         movieId = tmp[0]

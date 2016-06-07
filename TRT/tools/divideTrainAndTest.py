@@ -101,7 +101,7 @@ def divideByUser(filename=config.metaRatingFile):
 
     writeFile(trainData, testData)
 
-def divideByRandom(filename=config.metaRatingFile):
+def divideByRandom(filename=config.metaShuffledFile):
     trainData = []
     testData = []
     data = readFile(filename)
@@ -121,19 +121,15 @@ def settleUIAndIU():
     data = file.readlines()
     uiDict = dict()
     iuDict = dict()
-    r = 0
     for i in data:
         tmp = i[:-1].split(config.separator)
         userId = tmp[0]
         movieId = tmp[1]
         rating = float(tmp[2])
-        r += rating
         uiDict.setdefault(userId, dict())
         iuDict.setdefault(movieId, dict())
         uiDict[userId].setdefault(movieId, rating)
         iuDict[movieId].setdefault(userId, rating)
-    r /= (len(uiDict) * len(iuDict))
-    print r
     stdLib.dumpData(uiDict, config.uiDictFile)
     stdLib.dumpData(iuDict, config.iuDictFile)
 

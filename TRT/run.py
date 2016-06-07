@@ -31,16 +31,17 @@ if __name__ == '__main__':
     print 'program start......'
     print 'start time :'
     print startTime
-    # userQuality()
     if config.needDivideTrainAndTest is True:
         divideTrainAndTest(config.divideMethod)
     if config.needPreSettle is True:
         sortByTime()
         combineById()
+    userQuality()
     if config.needTRT is True:
         trt = TRT()
         trt.generaUserPrefer()
-        trt.simCalculate()
+        trt.utDictGenerate()
+        trt.matrix()
         if config.needCombine is False and config.needCFU is False:
             generaRecommendList(config.userSimMatrix)
     if config.needCFU is True:
