@@ -11,7 +11,7 @@
 @time: 16/5/25 下午2:55
 @description: null
 """
-from TRT.config import config
+from config import config
 
 def transRating():
     filename = config.ratingWithLabelFile
