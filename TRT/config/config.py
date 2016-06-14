@@ -26,6 +26,7 @@ subSeparator = conf.get('mainconf', 'subseparator')
 # meta file为元数据文件存放的位置
 metaRatingFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaRatingFile'))
 metaMovieFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaMovieFile'))
+metaTagFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaTagFile'))
 metaShuffledFile = path.join(path.dirname(argv[0]), r'result/metaShuffledFile.txt')
 # 训练集和测试集
 trainFile = path.join(path.dirname(argv[0]), r'result/trainRatings.txt')
@@ -58,9 +59,10 @@ recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList
 needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
 needPreSettle = False  # 是否需要预处理数据
 needCFU = False  # 是否需要运行CFU
-needTRT = True  # 是否需要进行TRT的运算
+needTRT = False  # 是否需要进行TRT的运算
 needCombine = False  # 是否需要合并CFU和TRT用户矩阵
-needEvaluate = True  # 是否需要进行评价
+needUGT = True
+needEvaluate = False  # 是否需要进行评价
 
 
 # TRT计算时的time hot算法的参数
