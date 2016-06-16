@@ -10,7 +10,7 @@
 @file: sortByTime.py
 @time: 15/12/7 14:28
 """
-from TRT.config import config
+from config import config
 
 
 def sortByTime():

@@ -19,6 +19,7 @@ from tools.transRating import transRating
 from tools.highPrecisionUserAnalysis import highPrecisionUserAnalysis
 from CFU.CFU import CFU
 from core.TRT import TRT
+from UGT.UGT import UGT
 from common.evaluation import Evaluation
 from common.recommendation import generaRecommendList
 from common.combineCFUAndTHCCF import combine
@@ -31,16 +32,17 @@ if __name__ == '__main__':
     print 'program start......'
     print 'start time :'
     print startTime
-    # userQuality()
     if config.needDivideTrainAndTest is True:
         divideTrainAndTest(config.divideMethod)
     if config.needPreSettle is True:
         sortByTime()
         combineById()
+    # userQuality()
     if config.needTRT is True:
         trt = TRT()
         trt.generaUserPrefer()
-        trt.simCalculate()
+        trt.utDictGenerate()
+        trt.matrix()
         if config.needCombine is False and config.needCFU is False:
             generaRecommendList(config.userSimMatrix)
     if config.needCFU is True:
@@ -51,6 +53,16 @@ if __name__ == '__main__':
     if config.needCombine is True:
         combine()
         generaRecommendList(config.combineSimMatrix)
+    if config.needUGT is True:
+        ugt = UGT()
+        ugt.initStat()
+        ugt.generateRecommend()
+        rap = ugt.recall_and_precision()
+        print "recall: %5.5f%%" % rap[0]
+        print "precision: %5.5f%%" % rap[1]
+        fvalue = ugt.fvalue(rap)
+        print "F value: %5.5f%%" % fvalue
+
     if config.needEvaluate is True:
         if config.needCombine is False:
             config.alpha = 0

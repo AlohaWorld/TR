@@ -11,8 +11,8 @@
 @time: 16/5/31 上午10:46
 @description: null
 """
-from TRT.config import config
-from TRT.lib import stdLib
+from config import config
+from lib import stdLib
 
 def highPrecisionUserAnalysis():
     filename = config.ratingWithLabelFile

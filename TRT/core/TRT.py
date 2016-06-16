@@ -12,6 +12,7 @@
 @description: null
 """
 from datetime import datetime
+import heapq
 from config import config
 from math import sqrt, log, e
 from lib import stdLib
@@ -97,59 +98,68 @@ class TRT(object):
                 self.userDict[userId][j] += aGrade  # / pow(T, config.G)
                 # / log(T - self.userQualityDict[userId] * config.beta, e)
 
-    def simCalculate(self):
+    def utDictGenerate(self):
         read = open(config.userPreferFile, 'r')
         data = read.readlines()
-        length = len(data)
-        print 'user amount %d' % length
-        userMatrix = {}
-        print 'similarity calculating......'
-        count = 0.0
-        # 根据用户偏好计算用户之间的相似度
+        print "generating ut dict......"
+        result = dict()
         for i in data:
-            count += 1
-            tmp_i = i[:-1].split(config.separator)
-            userIID = tmp_i[0]
-            iLabelArr = tmp_i[1].split(config.subSeparator)
-            userMatrix.setdefault(userIID, [])
-            calculateDict = {}  # 存放计算出的相似度结果的dictionary
-            for j in data:
-                tmp_j = j[:-1].split(config.separator)
-                userJID = tmp_j[0]
-                if userJID == userIID:
+            tmp = i[:-1].split(config.separator)
+            userId = tmp[0]
+            tags = tmp[1].split(config.subSeparator)
+            result.setdefault(userId, {})
+            for j in range(config.labelLength):
+                result[userId].setdefault(j, float(tags[j]))
+        stdLib.dumpData(result, config.utDictFile)
+
+    def matrix(self, utDict = None, filtrate = 5):
+        '''
+        calaulate the item_similarity matrix, using given simialrity method
+        :param uiDict: user-item score table, data type: dict
+        :threshold: qualifying the neighbour users,data type: float
+        :filtrate: the criteria of filting users, data type: int
+        '''
+        print 'calculating the user matrix......'
+        utDict = utDict or stdLib.loadData(config.utDictFile)
+        matrixDict = dict()
+        PROCESS = len(utDict)
+        COUNTER = 0.0
+        for i in utDict:
+            COUNTER += 1
+            vec1 = utDict[i]
+            if len(vec1) < filtrate:
+                continue
+            for j in utDict:
+                if i == j:
                     continue
-                else:
-                    jLabelArr = tmp_j[1].split(config.subSeparator)
-                    average_i = 0  # 存放用户i的评分均值
-                    average_j = 0  # 存放用户j的评分均值
-                    for m in range(config.labelLength):
-                        average_i += float(iLabelArr[m])
-                        average_j += float(jLabelArr[m])
-                    average_i /= config.labelLength
-                    average_j /= config.labelLength
-                    fractions = 0
-                    numerator_x = 0
-                    numerator_y = 0
-                    # 根据皮尔森算法公式进行相似度计算
-                    for m in range(config.labelLength):
-                        x = float(iLabelArr[m])
-                        y = float(jLabelArr[m])
-                        fractions += (x - average_i) * (y - average_j)
-                        numerator_x += (x - average_i) ** 2
-                        numerator_y += (y - average_j) ** 2
-                    if numerator_x == 0 or numerator_y == 0:
-                        result = 0
-                    else:
-                        result = fractions / sqrt(numerator_x * numerator_y)
-                    calculateDict.setdefault(userJID, result)
-            # 将所有的相似度进行降序排列
-            sortedSimGrade = sorted(calculateDict.iteritems(), key=lambda d: d[1], reverse=True)
-            for m in range(config.n):
-                userMatrix[userIID].append(sortedSimGrade[m])
-            if count % int(length * config.percentage) == 0:
-                print '%.3f%%' % (count * 100 / length)
+                vec2 = utDict[j]
+                if len(vec2) < filtrate:
+                    continue
+                similarity = self.adjustedCosine(vec1, vec2)
+                if similarity > 0:
+                    matrixDict.setdefault(i, list())
+                    matrixDict[i].append((j, similarity))
+            if i in matrixDict:
+                matrixDict[i] = heapq.nlargest(config.n, matrixDict[i], key=lambda x: x[1])
+            if COUNTER % int(PROCESS * config.percentage) == 0:
+                print '\r%.1f%%' % (100 * COUNTER / PROCESS)
         outfile = config.userSimMatrix
-        stdLib.dumpData(userMatrix, outfile)
+        stdLib.dumpData(matrixDict, outfile)
 
-        print 'finished......'
-
+    def adjustedCosine(self, vec1, vec2):
+        su = 0.0
+        l1 = 0.0
+        l2 = 0.0
+        avg1 = sum([vec1[i] for i in vec1]) / float(len(vec1))
+        avg2 = sum([vec2[i] for i in vec2]) / float(len(vec2))
+        for i in vec1:
+            if i in vec2:
+                su += (vec1[i] - avg1) * (vec2[i] - avg2)
+                l1 += pow((vec1[i] - avg1), 2)
+                l2 += pow((vec2[i] - avg2), 2)
+        temp = l1 * l2
+        if temp != 0:
+            similarity = su / sqrt(temp)
+        else:
+            similarity = 0
+        return similarity

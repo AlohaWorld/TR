@@ -26,11 +26,13 @@ subSeparator = conf.get('mainconf', 'subseparator')
 # meta file为元数据文件存放的位置
 metaRatingFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaRatingFile'))
 metaMovieFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaMovieFile'))
+metaTagFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaTagFile'))
 metaShuffledFile = path.join(path.dirname(argv[0]), r'result/metaShuffledFile.txt')
 # 训练集和测试集
 trainFile = path.join(path.dirname(argv[0]), r'result/trainRatings.txt')
 testFile = path.join(path.dirname(argv[0]), r'result/testRatings.txt')
 uiDictFile = path.join(path.dirname(argv[0]), r'result/uiDict.dict')
+utDictFile = path.join(path.dirname(argv[0]), r'result/utDict.dict')
 iuDictFile = path.join(path.dirname(argv[0]), r'result/iuDict.dict')
 # sorted file为将元数据按照时间先后顺序排列的文件
 sortedRatingFile = path.join(path.dirname(argv[0]), r'result/sortedRatings.txt')
@@ -58,14 +60,15 @@ needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
 needPreSettle = False  # 是否需要预处理数据
 needCFU = False  # 是否需要运行CFU
 needTRT = False  # 是否需要进行TRT的运算
-needCombine = True  # 是否需要合并CFU和TRT用户矩阵
-needEvaluate = True  # 是否需要进行评价
+needCombine = False  # 是否需要合并CFU和TRT用户矩阵
+needUGT = True
+needEvaluate = False  # 是否需要进行评价
 
 
 # TRT计算时的time hot算法的参数
 G = 1.6  # G为time hot算法的衰减参数,越大衰减越厉害,时间越近的值权重越大
 delta = 500  # delta 为移动坐标轴的参数
-alpha = 0.2
+alpha = 0.1
 beta = 0.8
 
 divideK = 5
@@ -79,7 +82,7 @@ labelDict = {
     'Action': 1,
     'Adventure': 2,
     'Animation': 3,
-    "Children's": 4,
+    "Children": 4,
     'Comedy': 5,
     'Crime': 6,
     'Documentary': 7,
@@ -94,6 +97,7 @@ labelDict = {
     'Thriller': 16,
     'War': 17,
     'Western': 18,
-    # 'IMAX': 19
+    'IMAX': 19,
+    '(no genres listed)': 20,
 }
 labelLength = len(labelDict)

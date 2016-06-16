@@ -11,8 +11,8 @@
 @time: 15/12/7 15:06
 @description: null
 """
-from TRT.tools import sortByTime
-from TRT.config import config
+from tools import sortByTime
+from config import config
 
 
 def combineById():
@@ -31,7 +31,7 @@ def combineById():
 
     for i in movies:
         labelArr = []
-        for m in range(19):
+        for m in range(config.labelLength):
             labelArr.append('0')
         tmp = i.split(config.separator)
         movieId = tmp[0]
