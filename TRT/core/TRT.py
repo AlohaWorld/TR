@@ -13,6 +13,7 @@
 """
 from datetime import datetime
 import heapq
+import time
 from config import config
 from math import sqrt, log, e
 from lib import stdLib
@@ -37,8 +38,7 @@ class TRT(object):
         for i in data:
             count += 1
             self.labelPreferCal(i)  # 根据打分时间进行惩罚
-            if count % int(length * config.percentage) == 0:
-                print '%f%%' % (count * 100 / length)
+            print '\r%.1f' % (100 * count / length) + '%', '--', '%.3f' % time.clock(), 's',
 
         # filename = "test.txt"
         # out = open(filename, 'w')
@@ -49,7 +49,7 @@ class TRT(object):
         # 对用户标签偏好进行归一化
         for i in self.userDict:
             maxV = minV = self.userDict[i][0]
-            for j in range(1, config.labelLength):
+            for j in range(config.labelLength):
                 if self.userDict[i][j] > maxV:
                     maxV = self.userDict[i][j]
                 if self.userDict[i][j] < minV:
@@ -141,8 +141,8 @@ class TRT(object):
                     matrixDict[i].append((j, similarity))
             if i in matrixDict:
                 matrixDict[i] = heapq.nlargest(config.n, matrixDict[i], key=lambda x: x[1])
-            if COUNTER % int(PROCESS * config.percentage) == 0:
-                print '\r%.1f%%' % (100 * COUNTER / PROCESS)
+
+            print '\r%.1f' % (100 * COUNTER / PROCESS) + '%', '--', '%.3f' % time.clock(), 's',
         outfile = config.userSimMatrix
         stdLib.dumpData(matrixDict, outfile)
 

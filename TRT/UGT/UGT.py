@@ -13,6 +13,7 @@
 """
 from lib import stdLib
 import heapq
+import time
 from config import config
 
 class UGT(object):
@@ -74,8 +75,7 @@ class UGT(object):
             for i in result[user]:
                 self.resultData[user].setdefault(i[0], i[1])
             print self.resultData[user]
-            if count % int(length * config.percentage) == 0:
-                print '%f%%' % (count * 100 / length)
+            print '\r%.1f' % (100 * count / length) + '%', '--', '%.3f' % time.clock(), 's',
 
     # 推荐算法
     def recommend(self, usr):

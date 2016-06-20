@@ -17,9 +17,11 @@ from tools.combineById import combineById
 from tools.divideTrainAndTest import divideTrainAndTest
 from tools.transRating import transRating
 from tools.highPrecisionUserAnalysis import highPrecisionUserAnalysis
+from tools.userPreferenceStablity import UserPreferenceStablity
 from CFU.CFU import CFU
 from core.TRT import TRT
 from UGT.UGT import UGT
+from SLO.SLO import SLO
 from common.evaluation import Evaluation
 from common.recommendation import generaRecommendList
 from common.combineCFUAndTHCCF import combine
@@ -38,6 +40,9 @@ if __name__ == '__main__':
         sortByTime()
         combineById()
     # userQuality()
+    ups = UserPreferenceStablity()
+    ups.generaUserPrefer()
+    ups.calStablity()
     if config.needTRT is True:
         trt = TRT()
         trt.generaUserPrefer()
@@ -62,11 +67,14 @@ if __name__ == '__main__':
         print "precision: %5.5f%%" % rap[1]
         fvalue = ugt.fvalue(rap)
         print "F value: %5.5f%%" % fvalue
-
+    if config.needSLO is True:
+        slo = SLO()
+        # slo.sloMatrix()
+        slo.generateRecommend()
     if config.needEvaluate is True:
         if config.needCombine is False:
             config.alpha = 0
-        evaluate = Evaluation()
+        evaluate = Evaluation(config.SLORecommendListFile)
         # evaluate.find_great_recommendation()
         # highPrecisionUserAnalysis()
         rap = evaluate.recall_and_precision()

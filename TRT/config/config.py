@@ -52,27 +52,31 @@ combineSimMatrix = path.join(path.dirname(argv[0]), r'result/combineSimMatrix.di
 recommendDict = path.join(path.dirname(argv[0]), r'result/recommend.dict')
 SVDUserSimMatrix = path.join(path.dirname(argv[0]), r'result/SVDUserSim.dict')
 userQualityDict = path.join(path.dirname(argv[0]), r'result/userQuality.dict')
+userStablityDict = path.join(path.dirname(argv[0]), r'result/userStablityDict.dict')
+userFirstRatingDict = path.join(path.dirname(argv[0]), r'result/userFirstRatingDict.dict')
+SLOMatrix = path.join(path.dirname(argv[0]), r'result/SLOMatrix.dict')
 
 # 用于存放推荐列表的文件
 recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList.txt')
-
+SLORecommendListFile = path.join(path.dirname(argv[0]), r'result/SLORecommendListFile.txt')
 needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
 needPreSettle = False  # 是否需要预处理数据
 needCFU = False  # 是否需要运行CFU
 needTRT = False  # 是否需要进行TRT的运算
 needCombine = False  # 是否需要合并CFU和TRT用户矩阵
-needUGT = True
+needUGT = False
+needSLO = False
 needEvaluate = False  # 是否需要进行评价
 
 
 # TRT计算时的time hot算法的参数
 G = 1.6  # G为time hot算法的衰减参数,越大衰减越厉害,时间越近的值权重越大
 delta = 500  # delta 为移动坐标轴的参数
-alpha = 0.1
+alpha = 0.1  # 融合用户相似度矩阵时原矩阵分数权重
 beta = 0.8
-
-divideK = 5
-divideMethod = 'user'
+stableTime = 90  # 计算用户偏好稳定性的间隔天数
+divideK = 5  # 划分原始数据集为K份
+divideMethod = 'user'  # 划分数据集的方式'user','random','time','k'四种
 
 percentage = 0.10  # 运行时每次显示的完成百分比
 
@@ -82,7 +86,7 @@ labelDict = {
     'Action': 1,
     'Adventure': 2,
     'Animation': 3,
-    "Children": 4,
+    "Children's": 4,
     'Comedy': 5,
     'Crime': 6,
     'Documentary': 7,
@@ -97,7 +101,7 @@ labelDict = {
     'Thriller': 16,
     'War': 17,
     'Western': 18,
-    'IMAX': 19,
-    '(no genres listed)': 20,
+    # 'IMAX': 19,
+    # '(no genres listed)': 20,
 }
 labelLength = len(labelDict)

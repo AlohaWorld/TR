@@ -13,7 +13,7 @@
 """
 from config import config
 from lib import stdLib
-from math import pi
+import time
 
 def generaRecommendList(simMatrix = None):
     filename = simMatrix or config.CFUUserSimMatrix
@@ -43,8 +43,7 @@ def generaRecommendList(simMatrix = None):
                     recommendDict[user][item] += float(similarity) * rating
         recommendDict[user] = dict(sorted(recommendDict[user].items(),
                                             key=lambda x: x[1], reverse=True)[0:config.listLength])
-        if count % int(length * config.percentage) == 0:
-            print '%.3f%%' % (count * 100 / length)
+        print '\r%.1f' % (100 * count / length) + '%', '--', '%.3f' % time.clock(), 's',
     print 'writing data......'
     outfile = config.recommendListFile
     out = open(outfile, 'w')
