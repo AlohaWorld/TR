@@ -12,10 +12,11 @@ recsys.algorithm.VERBOSE = True
 
 
 def load():
-    svd.load_data('ratings.txt', sep='::', format={'col': 1, 'row': 0, 'value': 2, 'ids': int})
-    [train, test] = svd._data.split_train_test(percent=80.3333103, shuffle_data=False)
-    svd.compute(k=3000, min_values=5, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
-    return [train, test]
+    svd.load_data('labelRates.txt', sep='::', format={'col': 1, 'row': 0, 'value': 2, 'ids': int})
+    #[train, test] = svd._data.split_train_test(percent=80.3333103, shuffle_data=False)
+    [train,test] = svd._data.split_train_test(percent=100, shuffle_data=False)
+    svd.compute(k=100, min_values=1, pre_normalize=None, mean_center=True, post_normalize=True, savefile='movielens')
+    return train
 
 
 def toDict(data):
@@ -36,7 +37,7 @@ def usimilarity(data):
         for j in data.keys():
             if i == j:
                 continue
-            sim = float(svd.similarity(i,j))
+            sim = svd.similarity(i,j)
             #print 'i: %s, j: %s, sim: %f' % (i,j,sim)
             if sim > 0:
                 simMatrix.setdefault(i, list())
@@ -45,7 +46,8 @@ def usimilarity(data):
             simMatrix[i] = heapq.nlargest(200, simMatrix[i], key=lambda x: x[1])
         if cnt % int(PROCESS * 0.10) == 0:
                 print '\r%.1f%%' % (100 * cnt / PROCESS)
-    filename = "svdUserSimMatrix.dict"
+    #filename = "svdUserSimMatrix.dict"
+    filename = "svdUserTagsSimMatrix.dict"
     stdLib.dumpData(simMatrix, filename)
 
 
@@ -100,12 +102,13 @@ if __name__=='__main__':
     svd = SVD()
     train = []
     test = []
-    [train, test] = load()
+    #[train, test] = load()
+    train = load()
     uidict = toDict(train)
-    tedict = toDict(test)
-    #usimilarity(uidict)
+    #tedict = toDict(test)
+    usimilarity(uidict)
     recommend(uidict)
-    rap = evaluation(tedict)
-    print rap
-    f = fvalue(rap)
-    print f
+    #rap = evaluation(tedict)
+    #print rap
+    #f = fvalue(rap)
+    #print f
