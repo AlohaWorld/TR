@@ -12,6 +12,7 @@
 @description: null
 """
 from datetime import datetime
+from os import path
 from tools.sortByTime import sortByTime
 from tools.combineById import combineById
 from tools.divideTrainAndTest import divideTrainAndTest
@@ -66,10 +67,12 @@ def generateRecList(algoType = 'TRT'):
 
 if __name__ == '__main__':
     startTime = datetime.now()
-    # reduceByTag.reduceByTag()  # 划分10m数据集为10个1m数据集
     print 'program start......'
     print 'start time :'
     print startTime
+    if path.exists('result/reducedMetaRatings1.txt') is False:
+        print 'Dividing meta data......'
+        reduceByTag.reduceByTag()  # 划分10m数据集为10个1m数据集
     k = 1
     while (k < 10):
         if config.needDivideTrainAndTest is True:
