@@ -13,6 +13,7 @@
 """
 from config import config
 from lib import stdLib
+import os
 from random import randint, shuffle
 
 
@@ -22,14 +23,14 @@ def readFile(filename=config.metaRatingFile):
     read.close()
     return data
 
-def divideTrainAndTest(name = 'time'):
+def divideTrainAndTest(fileID, name = 'time'):
     print 'spliting data......'
     if name == 'time':
         divideByTime(True)
     elif name == 'user':
         divideByUser()
     elif name == 'random':
-        divideByRandom()
+        divideByRandom(fileID)
     elif name == 'k':
         divideByK()
     settleUIAndIU()
@@ -102,12 +103,15 @@ def divideByUser(filename=config.metaRatingFile):
     writeFile(trainData, testData)
 
 def divideByRandom(filename=config.metaShuffledFile):
+    if os.path.exists(config.metaShuffledFile) is False:
+        shuffleFile()
     trainData = []
     testData = []
+    count = 0
     data = readFile(filename)
     for i in data:
-        rand = randint(1, 5)
-        if rand == 5:
+        count += 1
+        if count % 5 == 0:
             testData.append(i)
         else:
             trainData.append(i)
@@ -141,8 +145,9 @@ def writeFile(trainData, testData):
     testOut.write(''.join(testData))
     testOut.close()
 
-def shuffleFile():
-    read = open(config.metaRatingFile, 'r')
+def shuffleFile(fileID):
+    filename = r'result/reducedMetaRatings%d.txt' % fileID
+    read = open(filename, 'r')
     data = read.readlines()
     read.close()
     out = open(config.metaShuffledFile, 'w')

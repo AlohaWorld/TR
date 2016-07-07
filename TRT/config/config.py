@@ -24,9 +24,11 @@ separator = conf.get('mainconf', 'separator')
 subSeparator = conf.get('mainconf', 'subseparator')
 
 # meta file为元数据文件存放的位置
-metaRatingFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaRatingFile'))
+metaRatingFile = path.join(path.dirname(argv[0]), r'result/reducedMetaRatings1.txt')  # path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaRatingFile'))
 metaMovieFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaMovieFile'))
-metaTagFile = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaTagFile'))
+metaRatingFile_10m = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaRatingFile_10m'))
+metaMovieFile_10m = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaMovieFile_10m'))
+metaTagFile_10m = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaTagFile_10m'))
 metaShuffledFile = path.join(path.dirname(argv[0]), r'result/metaShuffledFile.txt')
 # 训练集和测试集
 trainFile = path.join(path.dirname(argv[0]), r'result/trainRatings.txt')
@@ -45,7 +47,7 @@ userPreferFile = path.join(path.dirname(argv[0]), r'result/userPrefer.txt')
 
 # 用于存放与用户最相似的n个用户的文件
 n = 200
-listLength = 50  # 推荐列表长度
+listLength = 10  # 推荐列表长度
 userSimMatrix = path.join(path.dirname(argv[0]), r'result/userSimMatrix.dict')
 CFUUserSimMatrix = path.join(path.dirname(argv[0]), r'result/CFUUserSimMatrix.dict')
 combineSimMatrix = path.join(path.dirname(argv[0]), r'result/combineSimMatrix.dict')
@@ -59,14 +61,16 @@ SLOMatrix = path.join(path.dirname(argv[0]), r'result/SLOMatrix.dict')
 # 用于存放推荐列表的文件
 recommendListFile = path.join(path.dirname(argv[0]), r'result/recommendGradeList.txt')
 SLORecommendListFile = path.join(path.dirname(argv[0]), r'result/SLORecommendListFile.txt')
-needDivideTrainAndTest = False  # 是否需要划分测试集和训练集
-needPreSettle = False  # 是否需要预处理数据
+
+needDivideTrainAndTest = True  # 是否需要划分测试集和训练集
+needPreSettle = True  # 是否需要预处理数据
 needCFU = False  # 是否需要运行CFU
-needTRT = False  # 是否需要进行TRT的运算
+needTRT = True  # 是否需要进行TRT的运算
 needCombine = False  # 是否需要合并CFU和TRT用户矩阵
 needUGT = False
 needSLO = False
-needEvaluate = False  # 是否需要进行评价
+needUPS = False
+needEvaluate = True  # 是否需要进行评价
 
 
 # TRT计算时的time hot算法的参数
@@ -74,9 +78,9 @@ G = 1.6  # G为time hot算法的衰减参数,越大衰减越厉害,时间越近�
 delta = 500  # delta 为移动坐标轴的参数
 alpha = 0.1  # 融合用户相似度矩阵时原矩阵分数权重
 beta = 0.8
-stableTime = 90  # 计算用户偏好稳定性的间隔天数
-divideK = 5  # 划分原始数据集为K份
-divideMethod = 'user'  # 划分数据集的方式'user','random','time','k'四种
+stableTime = 30  # 计算用户偏好稳定性的间隔天数
+divideK = 10  # 划分原始数据集为K份
+divideMethod = 'random'  # 划分数据集的方式'user','random','time','k'四种
 
 percentage = 0.10  # 运行时每次显示的完成百分比
 
@@ -86,7 +90,7 @@ labelDict = {
     'Action': 1,
     'Adventure': 2,
     'Animation': 3,
-    "Children's": 4,
+    'Children': 4,
     'Comedy': 5,
     'Crime': 6,
     'Documentary': 7,
@@ -101,7 +105,7 @@ labelDict = {
     'Thriller': 16,
     'War': 17,
     'Western': 18,
-    # 'IMAX': 19,
-    # '(no genres listed)': 20,
+    'IMAX': 19,
+    '(no genres listed)': 20,
 }
 labelLength = len(labelDict)

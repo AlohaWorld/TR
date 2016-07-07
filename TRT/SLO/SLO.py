@@ -89,7 +89,7 @@ class SLO(object):
                     resultList.append((i, score))
             resultList.sort(key=self.sortKey, reverse=True)
             recommendList[user] = resultList[0:config.listLength]
-            print '\r%.1f' % (100 * count / length) + '%', '--', '%.3f' % time.clock(), 's',
+            print '\r%.1f' % (100 * count / (length * 1.64)) + '%', '--', '%.3f' % time.clock(), 's',
         outfile = config.SLORecommendListFile
         out = open(outfile, 'w')
         for i in recommendList:

@@ -84,8 +84,8 @@ class CFU():
         for i in vec1:
             if i in vec2:
                 su += vec1[i] * vec2[i]
-                l1 += math.pow(vec1[i],2)
-                l2 += math.pow(vec2[i],2)
+                l1 += math.pow(vec1[i], 2)
+                l2 += math.pow(vec2[i], 2)
         temp = l1 * l2
         if temp != 0:
             similarity = su / math.sqrt(temp)

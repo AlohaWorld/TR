@@ -22,7 +22,7 @@ def combineById():
     data = read.readlines()
     read.close()
 
-    filename = config.metaMovieFile
+    filename = config.metaMovieFile_10m
     read = open(filename, 'r')
     movies = read.readlines()
     read.close()
