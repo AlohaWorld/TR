@@ -115,6 +115,7 @@ if __name__ == '__main__':
                 evaluate('SLO')
                 config.listLength += 10
         k += 2
+        config.listLength = 10
     endTime = datetime.now()
     print 'program finished......'
     print 'finish time :'
