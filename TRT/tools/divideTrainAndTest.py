@@ -102,9 +102,8 @@ def divideByUser(filename=config.metaRatingFile):
 
     writeFile(trainData, testData)
 
-def divideByRandom(fileID,filename=config.metaShuffledFile):
-    if os.path.exists(config.metaShuffledFile) is False:
-        shuffleFile(fileID)
+def divideByRandom(fileID, filename=config.metaShuffledFile):
+    shuffleFile(fileID)
     trainData = []
     testData = []
     count = 0

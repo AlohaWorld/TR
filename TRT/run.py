@@ -30,7 +30,7 @@ from common.userQuality import userQuality
 from config import config
 from reduce10mData import reduceByTag
 
-def evaluate(algoType):
+def evaluate(k, algoType):
     if config.needEvaluate is True:
         if config.needCombine is False:
             config.alpha = 0
@@ -53,10 +53,10 @@ def evaluate(algoType):
         out.write(str(config.n) + spliter + str(config.listLength) +
                   spliter + str(config.G) + spliter + str(config.delta) +
                   spliter + str(config.alpha) + spliter + str(rap[0])[:7] + '%' + spliter + str(rap[1])[:7] +
-                  '%' + spliter + str(fvalue)[:7] + '%' + spliter + str(mae)[:7] + spliter + algoType + spliter + '\n')
+                  '%' + spliter + str(fvalue)[:7] + '%' + spliter + str(mae)[:7] + spliter + algoType + str(k) + '\n')
         out.close()
 
-def generateRecList(algoType = 'TRT'):
+def generateRecList(k, algoType = 'TRT'):
     while (config.listLength <= 100):
         if algoType is 'TRT':
             generaRecommendList(config.userSimMatrix)
@@ -90,11 +90,11 @@ if __name__ == '__main__':
             trt.generaUserPrefer()
             trt.utDictGenerate()
             trt.matrix()
-            generateRecList()
+            generateRecList(k)
         if config.needCFU is True:
             cfu = CFU()
             cfu.matrix()
-            generateRecList('CFU')
+            generateRecList(k, 'CFU')
         if config.needCombine is True:
             combine()
             generaRecommendList(config.combineSimMatrix)
@@ -112,7 +112,7 @@ if __name__ == '__main__':
             slo.sloMatrix()
             while (config.listLength <= 100):
                 slo.generateRecommend()
-                evaluate('SLO')
+                evaluate(k, 'SLO')
                 config.listLength += 10
         k += 2
         config.listLength = 10
