@@ -62,7 +62,7 @@ def generateRecList(k, algoType = 'TRT'):
             generaRecommendList(config.userSimMatrix)
         if algoType is 'CFU':
             generaRecommendList()
-        evaluate(algoType)
+        evaluate(k, algoType)
         config.listLength += 10
 
 if __name__ == '__main__':
@@ -114,7 +114,7 @@ if __name__ == '__main__':
                 slo.generateRecommend()
                 evaluate(k, 'SLO')
                 config.listLength += 10
-        k += 2
+        k += 1
         config.listLength = 10
     endTime = datetime.now()
     print 'program finished......'
