@@ -30,6 +30,8 @@ metaRatingFile_10m = path.join(path.dirname(argv[0]), conf.get('fileconf', 'meta
 metaMovieFile_10m = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaMovieFile_10m'))
 metaTagFile_10m = path.join(path.dirname(argv[0]), conf.get('fileconf', 'metaTagFile_10m'))
 metaShuffledFile = path.join(path.dirname(argv[0]), r'result/metaShuffledFile.txt')
+metaTagFile = path.join(path.dirname(argv[0]), r'result/metaTagFile')
+
 # 训练集和测试集
 trainFile = path.join(path.dirname(argv[0]), r'result/trainRatings.txt')
 testFile = path.join(path.dirname(argv[0]), r'result/testRatings.txt')
@@ -65,9 +67,9 @@ SLORecommendListFile = path.join(path.dirname(argv[0]), r'result/SLORecommendLis
 needDivideTrainAndTest = True  # 是否需要划分测试集和训练集
 needPreSettle = True  # 是否需要预处理数据
 needCFU = False  # 是否需要运行CFU
-needTRT = True  # 是否需要进行TRT的运算
+needTRT = False  # 是否需要进行TRT的运算
 needCombine = False  # 是否需要合并CFU和TRT用户矩阵
-needUGT = False
+needUGT = True
 needSLO = False
 needUPS = False
 needEvaluate = True  # 是否需要进行评价

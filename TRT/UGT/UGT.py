@@ -31,6 +31,31 @@ class UGT(object):
             grade = float(tmp[2])
             self.testData.setdefault(userId, dict())
             self.testData[userId].setdefault(movieId, grade)
+        self.settleMetaTagFile()
+
+    def settleMetaTagFile(self):
+        allTagFile = open(config.metaTagFile_10m)
+        allTag = allTagFile.readlines()
+        allTagFile.close()
+        trainFile = open(config.trainFile)
+        train = trainFile.readlines()
+        trainFile.close()
+        userDict = dict()
+        tagList = list()
+        for i in train:
+            tmp = i[:-1].split(config.separator)
+            userId = tmp[0]
+            userDict.setdefault(userId, 1)
+        for i in allTag:
+            tmp = i[:-1].split(config.separator)
+            userId = tmp[0]
+            if userId in userDict:
+                tagList.append(i)
+        out = open(config.metaTagFile, 'w')
+        for data in tagList:
+            out.write(data)
+        out.close()
+
 
     # 统计各类数量
     def addValueToMat(self, theMat, key, value, incr):
@@ -74,7 +99,6 @@ class UGT(object):
             result[user] = sorted(tmp.items(), key=lambda x: x[1], reverse=True)[:config.listLength]
             for i in result[user]:
                 self.resultData[user].setdefault(i[0], i[1])
-            print self.resultData[user]
             print '\r%.1f' % (100 * count / length) + '%', '--', '%.3f' % time.clock(), 's',
 
     # 推荐算法
@@ -109,7 +133,7 @@ class UGT(object):
                 if item in tu:
                     hit += 1
             recall += len(tu)
-            precision += len(result[user])
+            precision += config.listLength
 
         recall = hit * 100 / (recall * 1.0)
         precision = hit * 100 / (precision * 1.0)

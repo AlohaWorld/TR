@@ -74,7 +74,7 @@ if __name__ == '__main__':
         print 'Dividing meta data......'
         reduceByTag.reduceByTag()  # 划分10m数据集为10个1m数据集
     k = 1
-    while (k < 10):
+    while (k <= 10):
         if config.needDivideTrainAndTest is True:
             divideTrainAndTest(k, config.divideMethod)
         if config.needPreSettle is True:
@@ -101,12 +101,22 @@ if __name__ == '__main__':
         if config.needUGT is True:
             ugt = UGT()
             ugt.initStat()
-            ugt.generateRecommend()
-            rap = ugt.recall_and_precision()
-            print "recall: %5.5f%%" % rap[0]
-            print "precision: %5.5f%%" % rap[1]
-            fvalue = ugt.fvalue(rap)
-            print "F value: %5.5f%%" % fvalue
+            while (config.listLength <= 100):
+                ugt.generateRecommend()
+                rap = ugt.recall_and_precision()
+                print "recall: %5.5f%%" % rap[0]
+                print "precision: %5.5f%%" % rap[1]
+                fvalue = ugt.fvalue(rap)
+                print "F value: %5.5f%%" % fvalue
+                outfile = r'evaluation/ugtEvaluationResult.csv'
+                out = open(outfile, 'a')
+                spliter = ','
+                out.write(str(config.n) + spliter + str(config.listLength) +
+                  spliter + str(config.G) + spliter + str(config.delta) +
+                  spliter + str(config.alpha) + spliter + str(rap[0])[:7] + '%' + spliter + str(rap[1])[:7] +
+                  '%' + spliter + str(fvalue)[:7] + '%' + spliter + str(0) + spliter + 'UGT' + str(k) + '\n')
+                out.close()
+                config.listLength += 10
         if config.needSLO is True:
             slo = SLO()
             slo.sloMatrix()
